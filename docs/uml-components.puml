@@ -1,0 +1,26 @@
+@startuml
+title FishPoint (Bottle) - Диаграмма компонентов
+skinparam componentStyle rectangle
+
+component "Браузер" as browser
+component "WSGI-сервер\n(Bottle встроенный)" as wsgi
+component "Маршрутизация\nroutes.py" as routes
+component "Шаблоны страниц\nviews/*.tpl" as views
+component "Статические ресурсы\nstatic/css, static/images" as static
+component "Точка входа\napp.py" as app
+
+user --> browser : HTTP-запросы
+browser --> wsgi : GET /, /catalog,\n/about, /contact
+wsgi --> app : запуск приложения
+app --> routes : регистрация маршрутов
+routes --> views : render template
+browser --> static : запрос CSS/SVG
+views ..> static : подключение ресурсов
+
+note right of static
+  CSS и изображения рассматриваются
+  как укрупненный компонент артефактов
+end note
+
+@enduml
+
