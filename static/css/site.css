@@ -103,8 +103,27 @@ button {
     cursor: pointer;
 }
 
+.btn {
+    display: inline-block;
+    border-radius: 8px;
+    padding: 10px 14px;
+    text-decoration: none;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-default {
+    border: 0;
+    background: var(--brand);
+    color: #ffffff;
+}
+
 .button:hover,
 button:hover {
+    background: var(--brand-dark);
+}
+
+.btn-default:hover {
     background: var(--brand-dark);
 }
 
@@ -135,6 +154,29 @@ button:hover {
     color: var(--muted);
 }
 
+.form-card input[type="text"],
+.form-card textarea {
+    width: min(100%, 520px);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font: inherit;
+}
+
+.fixed-textarea {
+    resize: none;
+}
+
+.result-ok {
+    color: var(--brand-dark);
+    font-weight: 700;
+}
+
+.result-error {
+    color: #9b1d1d;
+    font-weight: 700;
+}
+
 .footer {
     border-top: 1px solid var(--line);
     background: #ffffff;
@@ -151,4 +193,3 @@ button:hover {
         grid-template-columns: 1fr;
     }
 }
-
