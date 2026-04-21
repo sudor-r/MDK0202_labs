@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="FishPoint logo">
+  <rect width="64" height="64" rx="10" fill="#0f7a53"/>
+  <path d="M12 32c6-10 16-14 30-10 3 1 6 2 10 4-4 2-7 3-10 4-14 4-24 0-30-10 0 4 0 8 0 12z" fill="#c8f5e0"/>
+  <circle cx="41" cy="25" r="2" fill="#0f7a53"/>
+</svg>
+

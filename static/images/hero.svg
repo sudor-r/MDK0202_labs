@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Fishing illustration">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d9f2ff"/>
+      <stop offset="100%" stop-color="#bde7ff"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4eb5de"/>
+      <stop offset="100%" stop-color="#2c8eb8"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="300" fill="url(#sky)"/>
+  <rect y="300" width="800" height="200" fill="url(#water)"/>
+  <path d="M0 280c140-30 260-30 380 0s240 30 420 0v40H0z" fill="#9bdcff"/>
+  <circle cx="640" cy="90" r="48" fill="#fff6cc"/>
+  <path d="M170 360c45-35 95-35 140 0-45 35-95 35-140 0z" fill="#e8fbff"/>
+  <circle cx="270" cy="360" r="4" fill="#2c8eb8"/>
+  <path d="M430 390c35-25 75-25 110 0-35 25-75 25-110 0z" fill="#c9f5ff"/>
+  <circle cx="510" cy="390" r="4" fill="#2c8eb8"/>
+  <path d="M80 280l90-110 24 6-88 104z" fill="#6f4a2f"/>
+  <path d="M166 176c88-35 192-35 280 10" stroke="#6f4a2f" stroke-width="6" fill="none"/>
+  <circle cx="450" cy="195" r="8" fill="#e44747"/>
+</svg>
+
