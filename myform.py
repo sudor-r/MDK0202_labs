@@ -5,15 +5,12 @@ from pathlib import Path
 
 from bottle import Bottle, request, template
 
-
 EMAIL_PATTERN = re.compile(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$")
 QUESTIONS_FILE = Path("data/questions.json")
 
 LAST_FORM_DATA = {}
 
-
 def fix_encoding(text: str) -> str:
-    """Исправляет кодировку если она была испорчена"""
     if not text:
         return text
     try:
