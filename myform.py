@@ -1,20 +1,46 @@
+import json
 import re
 from datetime import date
+from pathlib import Path
 
 from bottle import Bottle, request, template
 
 
 EMAIL_PATTERN = re.compile(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$")
+CYRILLIC_PATTERN = re.compile(r"[А-Яа-яЁё]")
+QUESTIONS_FILE = Path("data/questions.json")
+
+# Этап ЛР 7: email -> [USERNAME, QUESTION]
+LAST_FORM_DATA = {}
 
 
 def _fix_mojibake(value: str) -> str:
-    # Fix strings like "ÐÐ»ÐµÐ³" that appear when UTF-8 text is misread as Latin-1.
-    if "Ð" in value or "Ñ" in value:
-        try:
-            return value.encode("latin1").decode("utf-8")
-        except (UnicodeEncodeError, UnicodeDecodeError):
-            return value
+    """Repair text when UTF-8 bytes were decoded as Latin-1/CP1252."""
+    try:
+        repaired = value.encode("latin1").decode("utf-8")
+    except (UnicodeEncodeError, UnicodeDecodeError):
+        return value
+
+    if len(CYRILLIC_PATTERN.findall(repaired)) > len(CYRILLIC_PATTERN.findall(value)):
+        return repaired
     return value
+
+
+def _load_questions() -> dict:
+    if not QUESTIONS_FILE.exists():
+        return {}
+    try:
+        with QUESTIONS_FILE.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def _save_questions(data: dict) -> None:
+    QUESTIONS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with QUESTIONS_FILE.open("w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 
 def setup_form_routes(app: Bottle) -> None:
@@ -44,9 +70,46 @@ def setup_form_routes(app: Bottle) -> None:
                 year=date.today().year,
             )
 
+        if len(question) <= 3:
+            return template(
+                "form_result",
+                title="Результат отправки - FishPoint",
+                ok=False,
+                message="Ошибка: вопрос должен содержать более 3 символов.",
+                year=date.today().year,
+            )
+
+        if question.isdigit():
+            return template(
+                "form_result",
+                title="Результат отправки - FishPoint",
+                ok=False,
+                message="Ошибка: вопрос не может состоять только из цифр.",
+                year=date.today().year,
+            )
+
+        # Этап ЛР 7: запись в словарь email -> [USERNAME, QUESTION]
+        LAST_FORM_DATA[email] = [user_name, question]
+        print("DEBUG LAST_FORM_DATA:", LAST_FORM_DATA)
+
+        # Этап ЛР 8: накопление в JSON без дублей вопросов
+        data = _load_questions()
+        user_data = data.get(email, {"username": user_name, "questions": []})
+        user_data["username"] = user_name
+
+        questions = user_data.get("questions", [])
+        if not isinstance(questions, list):
+            questions = []
+        if question not in questions:
+            questions.append(question)
+        user_data["questions"] = questions
+        data[email] = user_data
+        _save_questions(data)
+
         result = (
             f"Thanks, {user_name}! The answer will be sent to the mail {email}. "
-            f"Access Date: {date.today().isoformat()}"
+            f"Access Date: {date.today().isoformat()}. "
+            f"Saved questions: {len(questions)}"
         )
         return template(
             "form_result",
@@ -56,3 +119,4 @@ def setup_form_routes(app: Bottle) -> None:
             question=question,
             year=date.today().year,
         )
+
