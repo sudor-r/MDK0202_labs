@@ -27,3 +27,36 @@
     </article>
 </section>
 
+<section class="card form-card">
+    <h3>Ask a Question</h3>
+    <form action="/home" method="post" accept-charset="UTF-8">
+        <p>
+            <textarea
+                rows="2"
+                cols="50"
+                name="QUEST"
+                placeholder="Your question"
+                class="fixed-textarea"
+            ></textarea>
+        </p>
+        <p>
+            <input
+                type="text"
+                size="50"
+                name="USERNAME"
+                placeholder="Ваше имя"
+            />
+        </p>
+        <p>
+            <input
+                type="text"
+                size="50"
+                name="ADRESS"
+                placeholder="Your email"
+            />
+        </p>
+        <p>
+            <input type="submit" value="Send" class="btn btn-default" />
+        </p>
+    </form>
+</section>
