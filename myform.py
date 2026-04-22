@@ -7,23 +7,19 @@ from bottle import Bottle, request, template
 
 
 EMAIL_PATTERN = re.compile(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$")
-CYRILLIC_PATTERN = re.compile(r"[А-Яа-яЁё]")
 QUESTIONS_FILE = Path("data/questions.json")
 
-# Этап ЛР 7: email -> [USERNAME, QUESTION]
 LAST_FORM_DATA = {}
 
 
-def _fix_mojibake(value: str) -> str:
-    """Repair text when UTF-8 bytes were decoded as Latin-1/CP1252."""
+def fix_encoding(text: str) -> str:
+    """Исправляет кодировку если она была испорчена"""
+    if not text:
+        return text
     try:
-        repaired = value.encode("latin1").decode("utf-8")
+        return text.encode('latin1').decode('utf-8')
     except (UnicodeEncodeError, UnicodeDecodeError):
-        return value
-
-    if len(CYRILLIC_PATTERN.findall(repaired)) > len(CYRILLIC_PATTERN.findall(value)):
-        return repaired
-    return value
+        return text
 
 
 def _load_questions() -> dict:
@@ -46,11 +42,13 @@ def _save_questions(data: dict) -> None:
 def setup_form_routes(app: Bottle) -> None:
     @app.post("/home")
     def my_form():
-        user_name = _fix_mojibake((request.forms.get("USERNAME") or "").strip())
+        request.forms.encoding = 'utf-8'
+        
+        user_name = fix_encoding((request.forms.get("USERNAME") or "").strip())
         if user_name:
             user_name = user_name[:1].upper() + user_name[1:]
         email = (request.forms.get("ADRESS") or "").strip()
-        question = _fix_mojibake((request.forms.get("QUEST") or "").strip())
+        question = fix_encoding((request.forms.get("QUEST") or "").strip())
 
         if not user_name or not email or not question:
             return template(
@@ -88,11 +86,9 @@ def setup_form_routes(app: Bottle) -> None:
                 year=date.today().year,
             )
 
-        # Этап ЛР 7: запись в словарь email -> [USERNAME, QUESTION]
         LAST_FORM_DATA[email] = [user_name, question]
         print("DEBUG LAST_FORM_DATA:", LAST_FORM_DATA)
 
-        # Этап ЛР 8: накопление в JSON без дублей вопросов
         data = _load_questions()
         user_data = data.get(email, {"username": user_name, "questions": []})
         user_data["username"] = user_name
@@ -119,4 +115,3 @@ def setup_form_routes(app: Bottle) -> None:
             question=question,
             year=date.today().year,
         )
-
